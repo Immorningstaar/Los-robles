@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 # 1. Gestión de Usuarios y Roles
 class Usuario(AbstractUser):
@@ -57,6 +58,17 @@ class PlanMedicacion(models.Model):
     hora_inicio = models.TimeField()
     fecha_inicio_plan = models.DateField()
     activo = models.BooleanField(default=True)
+    @property
+    def obtener_ultima_dosis(self):
+        # Python solo ejecutará esto cuando el HTML se lo pida
+        return HistorialAdministracion.objects.filter(plan=self).order_by('-fecha_hora_real').first()
+    @property
+    def dosis_tomadas_hoy(self):
+        return HistorialAdministracion.objects.filter(
+            plan=self,
+            fecha_hora_real__date=timezone.now().date ()
+        ).count()
+
 
 # 5. Historial de Administración
 class HistorialAdministracion(models.Model):

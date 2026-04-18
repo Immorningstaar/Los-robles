@@ -1,0 +1,49 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2 class="text-primary">Dashboard de Enfermería </h2>
+        <p class="text-muted">Medicamentos programados para hoy</p>
+        <hr>
+    </div>
+
+    <div class="col-12">
+        <div class="table-responsive shadow-sm">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Hora </th>
+                        <th>Paciente </th>
+                        <th>Medicamento </th>
+                        <th>Dosis</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in planes %}
+                    <tr>
+                        <td><strong>{{ plan.obtener_ultima_dosis.fecha_hora_real|time:"H:i" }}</strong></td>
+                        <td>Hab. {{ plan.residente.habitacion_numero }} - {{ plan.residente.nombre }} {{ plan.residente.apellido }}</td>
+                        <td>{{ plan.medicamento.nombre_comercial }}</td>
+                        <td>{{ plan.dosis_tomadas_hoy }} / {{ plan.dosis }} </td>
+                        <td> {% if plan.dosis_tomadas_hoy < plan.dosis %}
+                                <a href="{% url 'administrar' plan.id %}" class="btn btn-success">
+                                     Administrar
+                            {% else %}
+                                <span style="color: green; font-weight: bold;">✅ Completado</span>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">No hay medicamentos programados para hoy. ¡Buen turno! </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

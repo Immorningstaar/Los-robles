@@ -1,0 +1,29 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2>Pacientes Residentes </h2>
+        <hr>
+    </div>
+
+    {% for residente in lista_de_residentes %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ residente.nombre }} {{ residente.apellido }}</h5>
+                <p class="card-text"><strong>Habitación:</strong> {{ residente.habitacion_numero }}</p>
+                
+                {% if residente.alertas_criticas %}
+                <div class="alert alert-danger" role="alert">
+                     {{ residente.alertas_criticas }}
+                </div>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
