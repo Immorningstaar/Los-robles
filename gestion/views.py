@@ -24,17 +24,18 @@ def dashboard_enfermeria(request):
     #  Entregamos los datos al template
     return render(request, 'gestion/dashboard.html', contexto)
 
-def administrar_medicamento(request, plan_id):
-    # 1. Buscamos el plan de la pastilla exacta
+def administrar_medicamento(request, plan_id, estado):
     plan_seleccionado = PlanMedicacion.objects.get(id=plan_id)
     
-    # 2. Generamos el comprobante con los 3 datos obligatorios 
-    if plan_seleccionado.dosis_tomadas_hoy < int(plan_seleccionado.dosis):
-        HistorialAdministracion.objects.create(
-        plan=plan_seleccionado, 
-        estado='ADMINISTRADO',
-        usuario=request.user
-         )
+    # 1. Atrapamos el texto del formulario. Si el botón no envía texto (como el botón verde), se guarda en blanco ('')
+    texto_obs = request.POST.get('observacion', '')
     
-    #  El "salto" automático de regreso al panel 
+    if plan_seleccionado.requiere_dosis_hoy:
+        HistorialAdministracion.objects.create(
+            plan=plan_seleccionado, 
+            estado=estado,
+            usuario=request.user,
+            observaciones=texto_obs  # <-- 2. Guardamos el texto en tu nueva columna
+        )
+    
     return redirect('dashboard')
