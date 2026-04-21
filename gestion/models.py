@@ -66,9 +66,20 @@ class PlanMedicacion(models.Model):
     def dosis_tomadas_hoy(self):
         return HistorialAdministracion.objects.filter(
             plan=self,
-            fecha_hora_real__date=timezone.now().date ()
+            fecha_hora_real__date=timezone.localdate(),
+            estado='ADMINISTRADO'
         ).count()
-
+    @property
+    def requiere_dosis_hoy(self):
+        # Aquí hacemos la conversión segura a número entero igual que en views.py
+        return self.dosis_tomadas_hoy < int(self.dosis)
+    @property
+    def historial_hoy(self):
+    # Traemos todos los registros de este plan que ocurrieron HOY
+        return HistorialAdministracion.objects.filter(
+        plan=self,
+        fecha_hora_real__date=timezone.localdate(),
+         ).order_by('fecha_hora_real') # Los ordenamos del más antiguo al más reciente
 
 # 5. Historial de Administración
 class HistorialAdministracion(models.Model):
@@ -82,6 +93,7 @@ class HistorialAdministracion(models.Model):
     fecha_hora_real = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADOS)
     observaciones = models.TextField(blank=True)
+    
 
     class Meta:
         verbose_name_plural = "Historiales de Administración"
