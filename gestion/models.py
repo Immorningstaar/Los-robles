@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from datetime import datetime, timedelta
 
 # 1. Gestión de Usuarios y Roles
 class Usuario(AbstractUser):
@@ -54,6 +55,7 @@ class PlanMedicacion(models.Model):
     residente = models.ForeignKey(Residente, on_delete=models.CASCADE)
     medicamento = models.ForeignKey(Medicamento, on_delete=models.CASCADE)
     dosis = models.CharField(max_length=100)
+    stock_actual = models.IntegerField(default=0, help_text="Pastillas traídas por la familia")
     frecuencia_horas = models.IntegerField(help_text="Cada cuántas horas se administra")
     hora_inicio = models.TimeField()
     fecha_inicio_plan = models.DateField()
@@ -80,6 +82,38 @@ class PlanMedicacion(models.Model):
         plan=self,
         fecha_hora_real__date=timezone.localdate(),
          ).order_by('fecha_hora_real') # Los ordenamos del más antiguo al más reciente
+    
+    @property
+    def proxima_hora_esperada(self):
+        """Calcula a qué hora toca la siguiente dosis del día"""
+        if not self.requiere_dosis_hoy:
+            return None
+        
+        horas_desplazamiento = self.dosis_tomadas_hoy * self.frecuencia_horas
+        hoy = timezone.localdate()
+        momento_inicio = datetime.combine(hoy, self.hora_inicio)
+        
+        # --- EL ARREGLO ESTÁ AQUÍ ---
+        # Si la hora no tiene país, le asignamos la zona horaria actual de tu proyecto
+        if timezone.is_naive(momento_inicio):
+            momento_inicio = timezone.make_aware(momento_inicio)
+        # ----------------------------
+            
+        hora_programada = momento_inicio + timedelta(hours=horas_desplazamiento)
+        return hora_programada
+    
+    @property
+    def esta_retrasado(self):
+        """Devuelve True si la hora actual superó la hora programada y no se ha administrado"""
+        if not self.requiere_dosis_hoy:
+            return False
+        
+        # Obtenemos la hora con la zona horaria de Chile configurada
+        ahora = timezone.localtime()
+        programada = self.proxima_hora_esperada
+        
+        # Si ya pasó la hora programada por más de 1 minuto, está retrasado
+        return ahora > (programada + timedelta(minutes=1))
 
 # 5. Historial de Administración
 class HistorialAdministracion(models.Model):

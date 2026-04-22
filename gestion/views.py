@@ -35,7 +35,14 @@ def administrar_medicamento(request, plan_id, estado):
             plan=plan_seleccionado, 
             estado=estado,
             usuario=request.user,
-            observaciones=texto_obs  # <-- 2. Guardamos el texto en tu nueva columna
+            observaciones=texto_obs  
         )
+    if estado == 'ADMINISTRADO':
+            # Verificamos que haya stock para evitar que los números bajen de cero (negativos)
+            if plan_seleccionado.stock_actual > 0:
+                plan_seleccionado.stock_actual -= 1
+                plan_seleccionado.save() # ¡No olvides guardar los cambios en la base de datos!
+        # ----------------------------------
     
+  
     return redirect('dashboard')
