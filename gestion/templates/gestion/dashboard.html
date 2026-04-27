@@ -81,6 +81,20 @@
                                                     <p class="fw-bold">{{ plan.residente.habitacion_numero }}</p>
                                                 </div>
                                             </div>
+                                                <div class="row mb-3 border-top pt-3">
+                                                <div class="col-12 mb-2">
+                                                    <p class="mb-1 text-muted"><small> Diagnóstico Principal</small></p>
+                                                    <p class="fw-bold text-dark">{{ plan.residente.diagnostico_principal }}</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-1 text-muted"><small> Contacto Familiar</small></p>
+                                                    <p class="fw-bold">{{ plan.residente.contacto_familiar|default:"No registrado" }}</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-1 text-muted"><small> Deglución</small></p>
+                                                    <p class="fw-bold">{{ plan.residente.condicion_deglucion }}</p>
+                                                </div>
+                                        </div>
                                             <hr>
                                             <h6 class="text-danger fw-bold">⚠️ Alertas Críticas / Alergias</h6>
                                             <div class="p-3 bg-light border border-danger rounded">
@@ -92,7 +106,12 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer justify-content-between">
-                                            
+    
+                                            {% if user.rol != 'TENS' %}
+                                                <a href="{% url 'editar_ficha' plan.residente.id %}" class="btn btn-outline-primary btn-sm"> Editar Ficha</a>4
+                                            {% else %}
+                                                <span class="text-muted" style="font-size: 0.85rem;"> Modo lectura</span>
+                                            {% endif %}
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                         </div>
                                     </div>

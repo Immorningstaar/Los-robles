@@ -41,8 +41,25 @@ def administrar_medicamento(request, plan_id, estado):
             # Verificamos que haya stock para evitar que los números bajen de cero (negativos)
             if plan_seleccionado.stock_actual > 0:
                 plan_seleccionado.stock_actual -= 1
-                plan_seleccionado.save() # ¡No olvides guardar los cambios en la base de datos!
-        # ----------------------------------
-    
+                plan_seleccionado.save()   
   
     return redirect('dashboard')
+
+def editar_ficha(request, paciente_id):
+    # 1. Buscamos al paciente exacto en la base de datos
+    paciente = Residente.objects.get(id=paciente_id)
+    
+    # 2. Preguntamos si nos están enviando datos nuevos (presionaron Guardar)
+    if request.method == 'POST':
+        # Capturamos los 3 datos usando el atributo 'name' de tu HTML
+        paciente.diagnostico_principal = request.POST.get('diagnostico_principal')
+        paciente.contacto_familiar = request.POST.get('contacto_familiar')
+        paciente.condicion_deglucion = request.POST.get('condicion_deglucion')
+        
+        # Guardamos todos los cambios juntos
+        paciente.save()
+        
+        return redirect('dashboard')
+        
+    # 3. Si no es POST, simplemente mostramos la página de edición normal (GET)
+    return render(request, 'gestion/editar_ficha.html', {'paciente': paciente})

@@ -1,0 +1,44 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h4 class="text-primary mb-4">✏️ Editar Ficha Clínica</h4>
+            
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">PACIENTE</label>
+                    <input type="text" class="form-control bg-light" value="{{ paciente.nombre }} {{ paciente.apellido }}" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">DIAGNÓSTICO PRINCIPAL</label>
+                    <textarea name="diagnostico_principal" class="form-control" rows="3">{{ paciente.diagnostico_principal }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">CONTACTO FAMILIAR (Nombre y Teléfono)</label>
+                    <input type="text" name="contacto_familiar" class="form-control" value="{{ paciente.contacto_familiar|default_if_none:'' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">CONDICIÓN DE DEGLUCIÓN</label>
+                    <select name="condicion_deglucion" class="form-select">
+                        <option value="Normal" {% if paciente.condicion_deglucion == 'Normal' %}selected{% endif %}>Normal</option>
+                        <option value="Papilla/Molido" {% if paciente.condicion_deglucion == 'Papilla/Molido' %}selected{% endif %}>Papilla/Molido</option>
+                        <option value="Sonda" {% if paciente.condicion_deglucion == 'Sonda' %}selected{% endif %}>Sonda</option>
+                    </select>
+                </div>
+
+                <div class="text-end mt-4 border-top pt-3">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
