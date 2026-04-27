@@ -36,6 +36,9 @@ class Residente(models.Model):
     habitacion_numero = models.IntegerField()
     alertas_criticas = models.TextField(blank=True, help_text="Alergias o condiciones especiales")
     activo = models.BooleanField(default=True)
+    diagnostico_principal = models.CharField(max_length=200, blank=True, default="No especificado")
+    contacto_familiar = models.CharField(max_length=200, blank=True, help_text="Nombre y Teléfono")
+    condicion_deglucion = models.CharField(max_length=200, blank=True, default="Normal", help_text="Ej: Normal, Molido, Sonda")
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} - Hab: {self.habitacion_numero}"
