@@ -1,0 +1,50 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Eliminar Paciente</h5>
+            </div>
+
+            <div class="card-body text-center">
+
+                <h5>¿Estás seguro que deseas eliminar?</h5>
+
+                <p class="mt-3">
+                    <strong>{{ residente.nombre }} {{ residente.apellido }}</strong>
+                </p>
+
+                <p class="text-muted">
+                    RUT: {{ residente.rut }}
+                </p>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+
+                        <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="btn btn-danger">
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

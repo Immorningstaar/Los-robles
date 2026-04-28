@@ -1,0 +1,67 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow">
+            <div class="card-header text-white" style="background: linear-gradient(90deg, #2c5cc5, #3a7bd5);">
+                <h5 class="mb-0">
+                    {% if form.instance.id %}
+                        Editar Paciente
+                    {% else %}
+                        Nuevo Paciente
+                    {% endif %}
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">RUT</label>
+                        {{ form.rut }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        {{ form.nombre }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Apellido</label>
+                        {{ form.apellido }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Habitación</label>
+                        {{ form.habitacion_numero }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Alertas / Alergias</label>
+                        {{ form.alertas_criticas }}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-secondary">
+                            Volver
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            Guardar
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

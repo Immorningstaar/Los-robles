@@ -1,8 +1,33 @@
 from django.urls import path
 from . import views
 
+app_name = 'gestion'
+
 urlpatterns = [
-    path('residentes/', views.lista_residentes, name='lista_residentes'),
+
+    # 🔐 AUTENTICACIÓN
+    path('', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+
+    # 🏥 DASHBOARD
     path('dashboard/', views.dashboard_enfermeria, name='dashboard'),
-    path('administrar/<int:plan_id>/<str:estado>/', views.administrar_medicamento, name='administrar_medicamento'),
+
+    # 👥 RESIDENTES
+    path('residentes/', views.lista_residentes, name='lista_residentes'),
+    path('residentes/nuevo/', views.crear_residente, name='crear_residente'),
+    path('residentes/editar/<int:id>/', views.editar_residente, name='editar_residente'),
+    path('residentes/eliminar/<int:id>/', views.eliminar_residente, name='eliminar_residente'),
+
+    # 💊 ADMINISTRAR MEDICAMENTO
+    path(
+        'administrar/<int:plan_id>/<str:estado>/',
+        views.administrar_medicamento,
+        name='administrar_medicamento'
+    ),
+
+    # 💊 PLANES (🔥 ESTO FALTABA)
+    path('plan/nuevo/', views.crear_plan, name='crear_plan'),
+    path('plan/editar/<int:id>/', views.editar_plan, name='editar_plan'),
+    path('plan/eliminar/<int:id>/', views.eliminar_plan, name='eliminar_plan'),
+
 ]

@@ -1,0 +1,116 @@
+/* Fondo general */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Título */
+h2 {
+    font-weight: 700;
+}
+
+/* Card contenedor */
+.table-responsive {
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* Tabla */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Header tabla */
+.table thead {
+    background: linear-gradient(90deg, #2c5cc5, #3a7bd5);
+    color: white;
+}
+
+/* Hover filas */
+.table tbody tr:hover {
+    background-color: #2347a0;
+    transition: 0.2s;
+}
+
+/* Badges (horas) */
+.badge {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
+/* Botones */
+.btn {
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Botón éxito */
+.btn-success {
+    background: #28a745;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+/* Botón peligro */
+.btn-danger {
+    background: #dc3545;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #bb2d3b;
+}
+
+/* Botón warning */
+.btn-warning {
+    background: #ffc107;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 12px;
+}
+
+/* Header modal */
+.modal-header {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Alertas críticas */
+.bg-light.border-danger {
+    background-color: #fff5f5 !important;
+}
+
+/* Link paciente */
+a.text-decoration-none {
+    color: #2c5cc5;
+}
+
+a.text-decoration-none:hover {
+    text-decoration: underline;
+}
+
+/* Estado retrasado */
+.bg-danger.rounded-pill {
+    font-size: 0.7rem;
+    padding: 5px 10px;
+}
+
+/* Texto completado */
+span[style*="green"] {
+    color: #28a745 !important;
+    font-weight: bold;
+}

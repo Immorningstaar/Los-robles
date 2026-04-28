@@ -1,0 +1,45 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+
+<div class="container mt-5">
+
+    <div class="card shadow p-4 text-center">
+
+        <!-- 🔥 TITULO CORREGIDO -->
+        <h3 class="text-warning mb-3">⚠️ Desactivar Plan de Medicación</h3>
+
+        <p>
+            ¿Estás seguro que deseas desactivar el plan de:
+            <strong>{{ plan.medicamento.nombre_comercial }}</strong>?
+        </p>
+
+        <!-- 🔥 TEXTO MÁS PROFESIONAL -->
+        <p class="text-muted">
+            El plan dejará de estar activo y no se mostrará en el sistema,
+            pero su historial se conservará.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="d-flex justify-content-center gap-3 mt-4">
+
+                <!-- 🔥 BOTÓN CORREGIDO -->
+                <button type="submit" class="btn btn-warning">
+                    ⛔ Desactivar
+                </button>
+
+                <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
