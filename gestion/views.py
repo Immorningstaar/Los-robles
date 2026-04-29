@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Residente, PlanMedicacion, HistorialAdministracion
+from .forms import ResidenteForm, PlanMedicacionForm
 
 def lista_residentes(request):
     #  Buscamos los datos
@@ -63,3 +64,29 @@ def editar_ficha(request, paciente_id):
         
     # 3. Si no es POST, simplemente mostramos la página de edición normal (GET)
     return render(request, 'gestion/editar_ficha.html', {'paciente': paciente})
+
+def registrar_residente(request):
+    if request.method == 'POST':
+        form = ResidenteForm(request.POST)
+        if form.is_valid():
+            nuevo_residente = form.save()
+            # En lugar de ir al dashboard, enviamos al siguiente paso con el ID
+            return redirect('asignar_plan', residente_id=nuevo_residente.id)
+    else:
+        form = ResidenteForm()
+    return render(request, 'gestion/registrar_residente.html', {'form': form})
+
+def asignar_plan(request, residente_id):
+    # Buscamos al residente para que el formulario sepa a quién le asignamos medicina
+    residente = get_object_or_404(Residente, id=residente_id)
+    
+    if request.method == 'POST':
+        form = PlanMedicacionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard') # Ahora sí, al terminar volvemos al panel
+    else:
+        # TRUCO: Pre-seleccionamos al residente en el formulario
+        form = PlanMedicacionForm(initial={'residente': residente})
+        
+    return render(request, 'gestion/asignar_plan.html', {'form': form, 'residente': residente})

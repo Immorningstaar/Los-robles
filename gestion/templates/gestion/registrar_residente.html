@@ -1,0 +1,22 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h4 class="text-primary mb-4">📝 Registrar Nuevo Residente</h4>
+            
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                {{ form.as_p }}
+                
+                <div class="text-end mt-4 border-top pt-3">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar Registro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
