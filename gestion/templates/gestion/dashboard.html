@@ -30,7 +30,7 @@
     {% elif registro.estado == 'RECHAZADO' %}bg-danger
     {% else %}bg-warning text-dark{% endif %}" style="cursor: pointer;" {% if registro.observaciones %}
                                 data-bs-toggle="modal" data-bs-target="#modalMotivo{{ registro.id }}" {% endif %}>
-                                {{ registro.fecha_hora_real|date:"H:i" }}
+                                {{ registro.fecha_hora_real|date:"H:i" }} - {{ registro.usuario.username }}
                             </span>
 
                             {% if registro.observaciones %}
