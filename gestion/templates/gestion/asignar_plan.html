@@ -1,0 +1,38 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Paso 2: Asignar Plan de Medicación</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Asignando medicación para: <strong>{{ residente.nombre }} {{ residente.apellido }}</strong></p>
+                    <hr>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'gestion:dashboard' %}" class="btn btn-outline-secondary">Omitir por ahora</a>
+                            <button type="submit" class="btn btn-success">Finalizar y Guardar Plan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

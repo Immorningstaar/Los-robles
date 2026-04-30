@@ -45,6 +45,20 @@
                         <label class="form-label">Alertas / Alergias</label>
                         {{ form.alertas_criticas }}
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Diagnóstico Principal</label>
+                        {{ form.diagnostico_principal }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contacto Familiar</label>
+                        {{ form.contacto_familiar }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Condición de Deglución</label>
+                        {{ form.condicion_deglucion }}
+                    </div>
 
                     <div class="d-flex justify-content-between">
                         <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-secondary">

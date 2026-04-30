@@ -162,14 +162,36 @@
                 <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
-                <p><strong>RUT:</strong> {{ plan.residente.rut }}</p>
-                <p><strong>Habitación:</strong> {{ plan.residente.habitacion_numero }}</p>
+<div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="mb-1 text-muted"><small>RUT</small></p>
+                        <p class="fw-bold">{{ plan.residente.rut }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1 text-muted"><small>Habitación</small></p>
+                        <p class="fw-bold">{{ plan.residente.habitacion_numero }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3 border-top pt-3">
+                    <div class="col-12 mb-2">
+                        <p class="mb-1 text-muted"><small>Diagnóstico Principal</small></p>
+                        <p class="fw-bold text-dark">{{ plan.residente.diagnostico_principal }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1 text-muted"><small>Contacto Familiar</small></p>
+                        <p class="fw-bold">{{ plan.residente.contacto_familiar|default:"No registrado" }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1 text-muted"><small>Deglución</small></p>
+                        <p class="fw-bold">{{ plan.residente.condicion_deglucion }}</p>
+                    </div>
+                </div>
 
                 <hr>
-
-                <h6 class="text-danger">Alertas</h6>
-                <div class="border p-2 bg-light">
+                <h6 class="text-danger fw-bold">⚠️ Alertas / Alergias</h6>
+                <div class="border p-2 bg-light rounded">
                     {% if plan.residente.alertas_criticas %}
                         {{ plan.residente.alertas_criticas }}
                     {% else %}
@@ -177,10 +199,16 @@
                     {% endif %}
                 </div>
             </div>
-
-        </div>
-    </div>
-</div>
+ <div class="modal-footer justify-content-between">
+                {% if user.rol == 'ENFERMERA' or user.rol == 'ADMIN' %}
+                    <a href="{% url 'gestion:editar_ficha' paciente_id=plan.residente.id %}" class="btn btn-outline-primary btn-sm">
+                        ✏️ Editar Ficha Clínica
+                    </a>
+                {% else %}
+                    <span class="text-muted small">🔒 Modo lectura (TENS)</span>
+                {% endif %}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>           
 
 <!-- RECHAZAR -->
 <div class="modal fade" id="modalRechazo{{ plan.id }}">

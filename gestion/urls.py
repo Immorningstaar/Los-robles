@@ -29,5 +29,10 @@ urlpatterns = [
     path('plan/nuevo/', views.crear_plan, name='crear_plan'),
     path('plan/editar/<int:id>/', views.editar_plan, name='editar_plan'),
     path('plan/eliminar/<int:id>/', views.eliminar_plan, name='eliminar_plan'),
+    
+    # ➕ RUTAS MÉDICAS RECUPERADAS
+    path('editar-ficha/<int:paciente_id>/', views.editar_ficha, name='editar_ficha'),
+    path('asignar-plan/<int:residente_id>/', views.asignar_plan, name='asignar_plan'),
 
 ]
+

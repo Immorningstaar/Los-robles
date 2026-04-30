@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q, Prefetch
 
 from .models import Residente, PlanMedicacion, HistorialAdministracion, Medicamento
-from .forms import LoginForm, ResidenteForm
+from .forms import LoginForm, ResidenteForm, PlanMedicacionForm
 
 
 # 🔐 LOGIN
@@ -111,9 +111,9 @@ def crear_residente(request):
 
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            nuevo_residente = form.save() 
             messages.success(request, "Paciente creado correctamente")
-            return redirect('gestion:lista_residentes')
+            return redirect('gestion:asignar_plan', residente_id=nuevo_residente.id)
 
     return render(request, 'gestion/residente_form.html', {'form': form})
 
@@ -218,3 +218,38 @@ def eliminar_plan(request, id):
     return render(request, 'gestion/confirmar_eliminar_plan.html', {
         'plan': plan
     })
+
+def editar_ficha(request, paciente_id):
+    # 1. Buscamos al paciente exacto en la base de datos
+    paciente = Residente.objects.get(id=paciente_id)
+    
+    # 2. Preguntamos si nos están enviando datos nuevos (presionaron Guardar)
+    if request.method == 'POST':
+        # Capturamos los 3 datos usando el atributo 'name' de tu HTML
+        paciente.diagnostico_principal = request.POST.get('diagnostico_principal')
+        paciente.contacto_familiar = request.POST.get('contacto_familiar')
+        paciente.condicion_deglucion = request.POST.get('condicion_deglucion')
+        
+        # Guardamos todos los cambios juntos
+        paciente.save()
+        
+        return redirect('gestion:dashboard') # Le agregué 'gestion:' para igualar las rutas nuevas
+        
+    # 3. Si no es POST, simplemente mostramos la página de edición normal (GET)
+    return render(request, 'gestion/editar_ficha.html', {'paciente': paciente})
+
+def asignar_plan(request, residente_id):
+    # Buscamos al residente para que el formulario sepa a quién le asignamos medicina
+    residente = get_object_or_404(Residente, id=residente_id)
+    
+    if request.method == 'POST':
+        form = PlanMedicacionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # 👇 Aquí le agregué 'gestion:' para que funcione con las nuevas rutas
+            return redirect('gestion:dashboard') 
+    else:
+        # TRUCO: Pre-seleccionamos al residente en el formulario
+        form = PlanMedicacionForm(initial={'residente': residente})
+        
+    return render(request, 'gestion/asignar_plan.html', {'form': form, 'residente': residente})
