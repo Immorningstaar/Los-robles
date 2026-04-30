@@ -1,0 +1,78 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+
+<div class="container">
+
+    <div class="d-flex justify-content-between mb-4">
+        <h2> Nuevo Plan de Medicación</h2>
+
+        <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-secondary">
+            ⬅ Volver
+        </a>
+    </div>
+
+    <form method="POST" class="card p-4 shadow-sm">
+        {% csrf_token %}
+
+        <!-- PACIENTE -->
+        <div class="mb-3">
+            <label>Paciente</label>
+            <select name="residente" class="form-control" required>
+                <option value="">Seleccione...</option>
+                {% for r in residentes %}
+                    <option value="{{ r.id }}"
+                        {% if residente_seleccionado == r.id %}selected{% endif %}>
+                        {{ r.nombre }} {{ r.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- MEDICAMENTO -->
+        <div class="mb-3">
+            <label>Medicamento</label>
+            <select name="medicamento" class="form-control" required>
+                <option value="">Seleccione...</option>
+                {% for m in medicamentos %}
+                    <option value="{{ m.id }}">
+                        {{ m.nombre_comercial }} ({{ m.miligramos }} mg)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Dosis</label>
+            <input type="number" name="dosis" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Stock</label>
+            <input type="number" name="stock" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Frecuencia (horas)</label>
+            <input type="number" name="frecuencia" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Hora inicio</label>
+            <input type="time" name="hora_inicio" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Fecha inicio</label>
+            <input type="date" name="fecha_inicio" class="form-control" required>
+        </div>
+
+        <div class="text-end">
+            <button class="btn btn-primary">💾 Guardar</button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

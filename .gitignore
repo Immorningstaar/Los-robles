@@ -10,4 +10,4 @@ __pycache__/
 *.pyc
 
 # Configuraciones de VS Code
-.vscode/
+.vscode/db.sqlite3

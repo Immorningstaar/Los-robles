@@ -18,21 +18,27 @@
                             <h2 class="text-success fw-bold"> Los Robles</h2>
                             <p class="text-muted">Portal de Enfermería</p>
                         </div>
-                        {% if form.errors %}
+
+                        <!-- MANEJO DE ERRORES DE DJANGO -->
+                        {% if form.errors or messages %}
                             <div class="alert alert-danger py-2 small">
                                 RUT o contraseña incorrectos. Por favor, revisa los datos.
                             </div>
                         {% endif %}
+
                         <form method="POST" action="">
                             {% csrf_token %}
+                            
                              <div class="mb-3">
                                 <label class="form-label text-muted small fw-bold">RUT DE USUARIO</label>
-                                <input type="text" name="username" class="form-control" placeholder="Ej: 12345678-9" required autofocus>
+                                <!-- USANDO TU CONFIGURACIÓN DE FORMS.PY -->
+                                {{ form.username }}
                             </div>
                             
                             <div class="mb-4">
                                 <label class="form-label text-muted small fw-bold">CONTRASEÑA</label>
-                                <input type="password" name="password" class="form-control" required>
+                                <!-- USANDO TU CONFIGURACIÓN DE FORMS.PY -->
+                                {{ form.password }}
                             </div>
                             
                             <button type="submit" class="btn btn-success w-100 fw-bold py-2">
