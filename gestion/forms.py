@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Residente, PlanMedicacion
 
-
 # 🔐 LOGIN
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -21,14 +20,8 @@ class LoginForm(AuthenticationForm):
         })
     )
 
-
 # 👤 FORMULARIO PACIENTE
 class ResidenteForm(forms.ModelForm):  
-    class Meta:
-        model = Residente
-        # Agregamos los 3 campos nuevos al final de esta lista
-        fields = ['rut', 'nombre', 'apellido', 'habitacion_numero', 'alertas_criticas', 
-                  'diagnostico_principal', 'contacto_familiar', 'condicion_deglucion']
     class Meta:
         model = Residente
         # Agregamos los 3 campos nuevos al final de esta lista
@@ -57,7 +50,7 @@ class ResidenteForm(forms.ModelForm):
             }),
         }
 
-# 💊 FORMULARIO ASIGNAR PLAN (RECUPERADO)
+# 💊 FORMULARIO ASIGNAR PLAN
 class PlanMedicacionForm(forms.ModelForm):
     class Meta:
         model = PlanMedicacion

@@ -34,7 +34,7 @@ urlpatterns = [
         name='administrar_medicamento'
     ),
     
-    # ➕ RUTAS MÉDICAS RECUPERADAS
+    # ➕ RUTAS MÉDICAS
     path('editar-ficha/<int:paciente_id>/', views.editar_ficha, name='editar_ficha'),
     path('asignar-plan/<int:residente_id>/', views.asignar_plan, name='asignar_plan'),
 

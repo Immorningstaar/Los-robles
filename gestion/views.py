@@ -111,7 +111,6 @@ def eliminar_residente(request, id):
         'residente': residente
     })
 
-# 🔥 AQUÍ ESTÁ TU FUNCIÓN RECUPERADA
 @login_required
 def editar_ficha(request, paciente_id):
     paciente = get_object_or_404(Residente, id=paciente_id)
@@ -130,7 +129,6 @@ def editar_ficha(request, paciente_id):
 
 @login_required
 def medicamentos(request):
-
     q = request.GET.get('q')
     medicamentos = Medicamento.objects.all()
 
@@ -178,7 +176,6 @@ def eliminar_medicamento(request, id):
 
 @login_required
 def crear_plan(request):
-
     residente_id = request.GET.get('residente')
 
     if request.method == 'POST':
@@ -202,11 +199,10 @@ def crear_plan(request):
         'residente_seleccionado': int(residente_id) if residente_id else None
     })
 
-# 🔥 AQUÍ ESTÁ TU OTRA FUNCIÓN RECUPERADA
 @login_required
 def asignar_plan(request, residente_id):
     residente = get_object_or_404(Residente, id=residente_id)
-
+    
     if request.method == 'POST':
         form = PlanMedicacionForm(request.POST)
         if form.is_valid():
