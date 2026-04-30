@@ -9,7 +9,7 @@
 
 <div class="row">
 
-    <!-- 🔥 HEADER MODIFICADO -->
+    <!-- 🔝 HEADER -->
     <div class="col-12 mb-4">
         <div class="d-flex justify-content-between align-items-center">
 
@@ -18,16 +18,24 @@
                 <p class="text-muted mb-0">Medicamentos programados para hoy</p>
             </div>
 
-            <div>
-                <!-- BOTÓN NUEVO -->
+            <!-- 🔥 BOTONES DE NAVEGACIÓN -->
+            <div class="d-flex gap-2">
+
+                <!-- PACIENTES -->
                 <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-outline-primary">
                     👤 Ver Pacientes
                 </a>
 
-                <!-- OPCIONAL PRO -->
-                <a href="{% url 'gestion:crear_residente' %}" class="btn btn-primary">
+                <!-- MEDICAMENTOS (MISMO ESTILO) -->
+                <a href="{% url 'gestion:medicamentos' %}" class="btn btn-outline-primary">
+                      Medicamentos
+                </a>
+
+                <!-- NUEVO PACIENTE -->
+                <a href="{% url 'gestion:crear_residente' %}" class="btn btn-success">
                     ➕ Nuevo Paciente
                 </a>
+
             </div>
 
         </div>
@@ -35,6 +43,7 @@
         <hr>
     </div>
 
+    <!-- 📊 TABLA -->
     <div class="col-12">
         <div class="table-responsive shadow-sm">
             <table class="table table-hover table-bordered align-middle">
