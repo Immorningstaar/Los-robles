@@ -1,0 +1,135 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+
+<div class="container mt-4">
+
+    <!-- 🔝 HEADER CON BOTÓN -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold m-0">Gestión de Medicamentos</h2>
+
+        <a href="{% url 'gestion:dashboard' %}" class="btn btn-primary">
+            ⬅ Volver al Dashboard
+        </a>
+    </div>
+
+    <div class="row">
+
+        <!-- 🔍 LISTADO -->
+        <div class="col-md-7">
+
+            <!-- Buscador -->
+            <form method="GET" class="mb-3">
+                <input type="text" name="q" value="{{ query }}" 
+                       placeholder="Buscar por nombre o genérico..." 
+                       class="form-control shadow-sm">
+            </form>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Genérico</th>
+                                <th>Mg</th>
+                                <th>Presentación</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for m in medicamentos %}
+                            <tr>
+                                <td class="fw-semibold text-primary">
+                                    {{ m.nombre_comercial }}
+                                </td>
+                                <td>{{ m.nombre_generico }}</td>
+                                <td>{{ m.miligramos }}</td>
+                                <td>{{ m.presentacion }}</td>
+
+                                <td class="text-center">
+                                    <form method="POST"
+                                          action="{% url 'gestion:eliminar_medicamento' m.id %}"
+                                          onsubmit="return confirm('¿Seguro que deseas eliminar este medicamento?');">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            🗑 Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">
+                                    No hay medicamentos registrados
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ➕ FORMULARIO -->
+        <div class="col-md-5">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h5 class="mb-3 text-primary fw-semibold">
+                        ➕ Agregar medicamento
+                    </h5>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre comercial</label>
+                            <input type="text" name="nombre_comercial" 
+                                   class="form-control" 
+                                   placeholder="Ej: Paracetamol" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre genérico</label>
+                            <input type="text" name="nombre_generico" 
+                                   class="form-control" 
+                                   placeholder="Ej: Acetaminofén" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Miligramos</label>
+                            <input type="number" name="miligramos" 
+                                   class="form-control" 
+                                   placeholder="Ej: 500" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Presentación</label>
+                            <input type="text" name="presentacion" 
+                                   class="form-control" 
+                                   placeholder="Ej: Tableta" required>
+                        </div>
+
+                        <button class="btn btn-primary w-100 fw-semibold">
+                            Guardar medicamento
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

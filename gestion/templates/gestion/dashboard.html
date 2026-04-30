@@ -9,7 +9,7 @@
 
 <div class="row">
 
-    <!-- 🔥 HEADER MODIFICADO -->
+    <!-- 🔝 HEADER -->
     <div class="col-12 mb-4">
         <div class="d-flex justify-content-between align-items-center">
 
@@ -18,16 +18,24 @@
                 <p class="text-muted mb-0">Medicamentos programados para hoy</p>
             </div>
 
-            <div>
-                <!-- BOTÓN NUEVO -->
+            <!-- 🔥 BOTONES DE NAVEGACIÓN -->
+            <div class="d-flex gap-2">
+
+                <!-- PACIENTES -->
                 <a href="{% url 'gestion:lista_residentes' %}" class="btn btn-outline-primary">
                     👤 Ver Pacientes
                 </a>
 
-                <!-- OPCIONAL PRO -->
-                <a href="{% url 'gestion:crear_residente' %}" class="btn btn-primary">
+                <!-- MEDICAMENTOS (MISMO ESTILO) -->
+                <a href="{% url 'gestion:medicamentos' %}" class="btn btn-outline-primary">
+                      Medicamentos
+                </a>
+
+                <!-- NUEVO PACIENTE -->
+                <a href="{% url 'gestion:crear_residente' %}" class="btn btn-success">
                     ➕ Nuevo Paciente
                 </a>
+
             </div>
 
         </div>
@@ -35,6 +43,7 @@
         <hr>
     </div>
 
+    <!-- 📊 TABLA -->
     <div class="col-12">
         <div class="table-responsive shadow-sm">
             <table class="table table-hover table-bordered align-middle">
@@ -146,14 +155,14 @@
             </table>
         </div>
     </div>
-</div>
+</div> <!-- 👈 Fin del row principal -->
 
-<!-- 🔵 MODALES -->
+<!-- 🔵 MODALES EXTERNOS A LA TABLA -->
 
 {% for plan in planes %}
 
 <!-- FICHA PACIENTE -->
-<div class="modal fade" id="modalFicha{{ plan.id }}">
+<div class="modal fade" id="modalFicha{{ plan.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -162,7 +171,7 @@
                 <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-<div class="modal-body">
+            <div class="modal-body">
                 <div class="row">
                     <div class="col-6">
                         <p class="mb-1 text-muted"><small>RUT</small></p>
@@ -199,7 +208,8 @@
                     {% endif %}
                 </div>
             </div>
- <div class="modal-footer justify-content-between">
+
+            <div class="modal-footer justify-content-between">
                 {% if user.rol == 'ENFERMERA' or user.rol == 'ADMIN' %}
                     <a href="{% url 'gestion:editar_ficha' paciente_id=plan.residente.id %}" class="btn btn-outline-primary btn-sm">
                         ✏️ Editar Ficha Clínica
@@ -208,60 +218,51 @@
                     <span class="text-muted small">🔒 Modo lectura (TENS)</span>
                 {% endif %}
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>           
+            </div>          
+        </div> <!-- 👈 FALTABAN ESTOS 3 CIERRES -->
+    </div>
+</div>
 
 <!-- RECHAZAR -->
-<div class="modal fade" id="modalRechazo{{ plan.id }}">
+<div class="modal fade" id="modalRechazo{{ plan.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-
-            <form method="POST"
-                  action="{% url 'gestion:administrar_medicamento' plan.id 'RECHAZADO' %}">
+            <form action="{% url 'gestion:administrar_medicamento' plan.id 'RECHAZADO' %}" method="POST">
                 {% csrf_token %}
-
                 <div class="modal-header bg-danger text-white">
                     <h5>Rechazar</h5>
                     <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
                     <textarea name="observacion" class="form-control" required></textarea>
                 </div>
-
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Guardar</button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
 
 <!-- OMITIR -->
-<div class="modal fade" id="modalOmitir{{ plan.id }}">
+<div class="modal fade" id="modalOmitir{{ plan.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-
-            <form method="POST"
-                  action="{% url 'gestion:administrar_medicamento' plan.id 'OMITIDO' %}">
+            <form method="POST" action="{% url 'gestion:administrar_medicamento' plan.id 'OMITIDO' %}">
                 {% csrf_token %}
-
                 <div class="modal-header bg-warning">
                     <h5>Omitir</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
                     <textarea name="observacion" class="form-control" required></textarea>
                 </div>
-
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-warning">Guardar</button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
