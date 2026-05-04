@@ -335,3 +335,15 @@ def administrar_medicamento(request, plan_id, estado):
             messages.warning(request, "No corresponde administrar en este momento")
 
     return redirect('gestion:dashboard')
+
+# 📊 ================== REPORTES ==================
+
+@login_required(login_url='gestion:login')
+def reporte_historial(request):
+    # Traemos todo el historial, ordenado del más reciente al más antiguo
+    # Usamos '-id' para que los últimos registros salgan arriba
+    historial = HistorialAdministracion.objects.select_related(
+        'plan__residente', 'plan__medicamento', 'usuario'
+    ).all().order_by('-id')
+    
+    return render(request, 'gestion/reporte_historial.html', {'historial': historial})

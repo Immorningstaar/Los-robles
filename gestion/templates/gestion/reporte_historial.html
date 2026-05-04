@@ -1,0 +1,84 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    
+    <!-- Encabezado con Botón de Imprimir -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-success fw-bold">Reporte de Administración</h2>
+            <p class="text-muted">Historial completo de medicamentos administrados en Los Robles.</p>
+        </div>
+        <button onclick="window.print()" class="btn btn-secondary shadow-sm">
+            <i class="bi bi-printer-fill me-2"></i> Imprimir / PDF
+        </button>
+    </div>
+
+    <!-- Tabla de Datos -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>N°</th>
+                        <th>Fecha y Hora</th>
+                        <th>RUT</th>
+                        <th>Residente</th>
+                        <th>Medicamento</th>
+                        <th>Dosis</th>
+                        <th>Estado</th>
+                        <th>Responsable</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in historial %}
+                    <tr>
+                        <td>{{ registro.id }}</td>
+                        <!-- Usamos el filtro |date para que se vea ordenado: Ej: 04/05/2026 18:30 -->
+                        <td class="text-nowrap">{{ registro.fecha_hora_real|date:"d/m/Y H:i" }}</td>
+                        <td class="text-nowrap">{{ registro.plan.residente.rut }}</td>
+                        <!-- Accedemos al residente a través del plan -->
+                        <td class="fw-bold">{{ registro.plan.residente.nombre }} {{ registro.plan.residente.apellido }}</td>
+                        <td>{{ registro.plan.medicamento.nombre_comercial }}</td>
+                        <td>{{ registro.plan.dosis }} mg/ml</td>
+                        
+                        <!-- Colores dependiendo del estado -->
+                        <td>
+                            {% if registro.estado == 'ADMINISTRADO' %}
+                                <span class="badge bg-success">Administrado</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ registro.estado }}</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td><i class="bi bi-person-fill"></i> {{ registro.usuario.username }}</td>
+                        <td class="small text-muted">{{ registro.observaciones|default:"Sin observaciones" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            Aún no hay registros de administración de medicamentos en el sistema.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Estilo especial para ocultar botones al imprimir el PDF -->
+<style>
+    @media print {
+        .navbar, .btn, footer {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

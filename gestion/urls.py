@@ -41,4 +41,6 @@ urlpatterns = [
     path('editar-ficha/<int:paciente_id>/', views.editar_ficha, name='editar_ficha'),
     path('asignar-plan/<int:residente_id>/', views.asignar_plan, name='asignar_plan'),
 
+    #reportes
+    path('reportes/historial/', views.reporte_historial, name='reporte_historial'),
 ]
