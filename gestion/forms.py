@@ -1,7 +1,19 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Residente, PlanMedicacion
+from .models import Residente, PlanMedicacion, Usuario
 
+
+class RegistroPersonalForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        # Pon aquí los campos que el Admin necesita llenar. 
+        # Asegúrate de incluir la contraseña.
+        fields = ['rut', 'nombre_completo', 'rol', 'email', 'password'] 
+        
+        # Le decimos a Django que oculte lo que se escribe en la contraseña
+        widgets = {
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
 # 🔐 LOGIN
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
