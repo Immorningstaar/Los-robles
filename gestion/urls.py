@@ -4,11 +4,14 @@ from . import views
 app_name = 'gestion'
 
 urlpatterns = [
-
+    
+    path('registrar-personal/', views.registrar_personal, name='registrar_personal'),
     # ================== AUTENTICACIÓN ==================
     path('', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-
+#BORRAR
+    path('personal/', views.lista_personal, name='lista_personal'),
+    path('personal/eliminar/<int:usuario_id>/', views.eliminar_personal, name='eliminar_personal'),
     # ================== DASHBOARD ==================
     path('dashboard/', views.dashboard_enfermeria, name='dashboard'),
 

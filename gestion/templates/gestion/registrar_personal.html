@@ -1,0 +1,25 @@
+{% extends 'gestion/base.html' %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Registrar Nuevo Personal</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-success w-100">Crear Cuenta de Usuario</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

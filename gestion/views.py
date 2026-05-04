@@ -1,15 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Q, Prefetch
 from django.db import IntegrityError
 
-from .models import Residente, PlanMedicacion, HistorialAdministracion, Medicamento
-from .forms import LoginForm, ResidenteForm, PlanMedicacionForm
+from .models import Residente, PlanMedicacion, HistorialAdministracion, Medicamento, Usuario
+from .forms import LoginForm, ResidenteForm, PlanMedicacionForm, RegistroPersonalForm
 
 
-# 🔐 ================== AUTH ==================
+# 🔐 ================== REGLAS DE SEGURIDAD (CANDADOS) ==================
+
+# Regla: ¿Es un Administrador?
+def es_admin(usuario):
+    # Estandarizamos a mayúsculas por si acaso (.upper()) y verificamos superusuario
+    return usuario.is_authenticated and (usuario.is_superuser or usuario.rol.upper() == 'ADMIN')
+
+# Regla: ¿Es Enfermera o Admin? (Para acciones médicas)
+def es_enfermera_o_admin(usuario):
+    return usuario.is_authenticated and (usuario.is_superuser or usuario.rol.upper() in ['ENFERMERA', 'ADMIN'])
+
+
+# 🔑 ================== AUTENTICACIÓN (LOGIN / LOGOUT) ==================
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -27,15 +39,14 @@ def login_view(request):
 
     return render(request, 'gestion/login.html', {'form': form})
 
-
 def logout_view(request):
     logout(request)
     return redirect('gestion:login')
 
 
-# 🏥 ================== DASHBOARD ==================
+# 🏥 ================== DASHBOARD PRINCIPAL ==================
 
-@login_required
+@login_required(login_url='gestion:login')
 def dashboard_enfermeria(request):
     planes_activos = PlanMedicacion.objects.filter(activo=True).order_by('hora_inicio')
 
@@ -44,9 +55,54 @@ def dashboard_enfermeria(request):
     })
 
 
-# 👥 ================== RESIDENTES ==================
+# 👨‍⚕️ ================== GESTIÓN DE PERSONAL (SOLO ADMIN) ==================
 
-@login_required
+@login_required(login_url='gestion:login')
+@user_passes_test(es_admin, login_url='gestion:dashboard')
+def lista_personal(request):
+    # Buscamos a todo el personal registrado
+    personal_db = Usuario.objects.all()
+    return render(request, 'gestion/lista_personal.html', {'lista_personal': personal_db})
+
+@login_required(login_url='gestion:login') 
+@user_passes_test(es_admin, login_url='gestion:dashboard')
+def registrar_personal(request):
+    if request.method == 'POST':
+        form = RegistroPersonalForm(request.POST)
+        
+        if form.is_valid():
+            nuevo_usuario = form.save(commit=False)
+            password_limpia = form.cleaned_data['password']
+            nuevo_usuario.set_password(password_limpia)
+            
+            # ---> EL TRUCO: Igualamos el username interno de Django al RUT <---
+            nuevo_usuario.username = nuevo_usuario.rut 
+            
+            nuevo_usuario.save()
+            return redirect('gestion:lista_personal') 
+            
+    else:
+        form = RegistroPersonalForm()
+        
+    return render(request, 'gestion/registrar_personal.html', {'form': form})
+
+@login_required(login_url='gestion:login')
+@user_passes_test(es_admin, login_url='gestion:dashboard')
+def eliminar_personal(request, usuario_id):
+    # Buscamos al usuario por su ID
+    usuario_a_borrar = get_object_or_404(Usuario, id=usuario_id)
+    
+    # PEQUEÑO SEGURO: Evitamos que el Administrador se borre a sí mismo por accidente
+    if request.user.id != usuario_a_borrar.id:
+        usuario_a_borrar.delete()
+        
+    # Volvemos a la lista de personal
+    return redirect('gestion:lista_personal')
+
+
+# 👥 ================== GESTIÓN DE RESIDENTES ==================
+
+@login_required(login_url='gestion:login')
 def lista_residentes(request):
     query = request.GET.get('q')
     residentes = Residente.objects.all()
@@ -70,8 +126,7 @@ def lista_residentes(request):
         'query': query
     })
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def crear_residente(request):
     form = ResidenteForm(request.POST or None)
 
@@ -83,8 +138,7 @@ def crear_residente(request):
 
     return render(request, 'gestion/residente_form.html', {'form': form})
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def editar_residente(request, id):
     residente = get_object_or_404(Residente, id=id)
     form = ResidenteForm(request.POST or None, instance=residente)
@@ -97,8 +151,7 @@ def editar_residente(request, id):
 
     return render(request, 'gestion/residente_form.html', {'form': form})
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def eliminar_residente(request, id):
     residente = get_object_or_404(Residente, id=id)
 
@@ -111,7 +164,7 @@ def eliminar_residente(request, id):
         'residente': residente
     })
 
-@login_required
+@login_required(login_url='gestion:login')
 def editar_ficha(request, paciente_id):
     paciente = get_object_or_404(Residente, id=paciente_id)
     if request.method == 'POST':
@@ -125,15 +178,15 @@ def editar_ficha(request, paciente_id):
     return render(request, 'gestion/editar_ficha.html', {'paciente': paciente})
 
 
-# 💊 ================== MEDICAMENTOS ==================
+# 💊 ================== INVENTARIO DE MEDICAMENTOS ==================
 
-@login_required
+@login_required(login_url='gestion:login')
 def medicamentos(request):
     q = request.GET.get('q')
-    medicamentos = Medicamento.objects.all()
+    medicamentos_db = Medicamento.objects.all()
 
     if q:
-        medicamentos = medicamentos.filter(
+        medicamentos_db = medicamentos_db.filter(
             Q(nombre_comercial__icontains=q) |
             Q(nombre_generico__icontains=q)
         )
@@ -153,12 +206,11 @@ def medicamentos(request):
         return redirect('gestion:medicamentos')
 
     return render(request, 'gestion/medicamentos.html', {
-        'medicamentos': medicamentos,
+        'medicamentos': medicamentos_db,
         'query': q
     })
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def eliminar_medicamento(request, id):
     medicamento = get_object_or_404(Medicamento, id=id)
 
@@ -172,9 +224,9 @@ def eliminar_medicamento(request, id):
     return redirect('gestion:medicamentos')
 
 
-# 💊 ================== PLANES ==================
+# 📋 ================== PLANES DE MEDICACIÓN ==================
 
-@login_required
+@login_required(login_url='gestion:login')
 def crear_plan(request):
     residente_id = request.GET.get('residente')
 
@@ -199,7 +251,7 @@ def crear_plan(request):
         'residente_seleccionado': int(residente_id) if residente_id else None
     })
 
-@login_required
+@login_required(login_url='gestion:login')
 def asignar_plan(request, residente_id):
     residente = get_object_or_404(Residente, id=residente_id)
     
@@ -213,8 +265,7 @@ def asignar_plan(request, residente_id):
 
     return render(request, 'gestion/asignar_plan.html', {'form': form, 'residente': residente})
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def editar_plan(request, id):
     plan = get_object_or_404(PlanMedicacion, id=id)
 
@@ -239,8 +290,7 @@ def editar_plan(request, id):
         'residente_seleccionado': plan.residente.id
     })
 
-
-@login_required
+@login_required(login_url='gestion:login')
 def eliminar_plan(request, id):
     plan = get_object_or_404(PlanMedicacion, id=id)
 
@@ -256,9 +306,9 @@ def eliminar_plan(request, id):
     })
 
 
-# 💊 ================== ADMINISTRACIÓN ==================
+# 💉 ================== ADMINISTRACIÓN Y REGISTRO CLINICO ==================
 
-@login_required
+@login_required(login_url='gestion:login')
 def administrar_medicamento(request, plan_id, estado):
     if request.method == 'POST':
         plan = get_object_or_404(PlanMedicacion, id=plan_id)
