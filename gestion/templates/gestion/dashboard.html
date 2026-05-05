@@ -38,12 +38,13 @@
                     <tr>
                         <!-- 🕒 HISTORIAL INTERACTIVO -->
                         <td>
+                            <!-- 1. Mostrar todos los registros del día (los verdes, rojos, amarillos) -->
                             {% for registro in plan.historial_hoy %}
                                 <span class="badge 
                                     {% if registro.estado == 'ADMINISTRADO' %}bg-success
                                     {% elif registro.estado == 'RECHAZADO' %}bg-danger
                                     {% else %}bg-warning text-dark{% endif %}" 
-                                    style="cursor: pointer; margin-bottom: 2px;"
+                                    style="cursor: pointer; margin-bottom: 2px; display: inline-block;"
                                     {% if registro.observaciones %}
                                         data-bs-toggle="modal" data-bs-target="#modalMotivo{{ registro.id }}"
                                     {% endif %}>
@@ -72,13 +73,17 @@
                                     </div>
                                 </div>
                                 {% endif %}
-                            {% empty %}
-                                {% if plan.esta_retrasado %}
-                                    <span class="badge rounded-pill bg-danger">⚠️ RETRASADO</span>
-                                {% else %}
-                                    <small class="text-muted">Sin actividad hoy</small>
-                                {% endif %}
                             {% endfor %}
+
+                            <!-- 2. AFUERA DEL FOR: Evaluar SIEMPRE si la dosis actual está retrasada -->
+                            {% if plan.esta_retrasado %}
+                                <br><span class="badge rounded-pill bg-danger mt-1">⚠️ RETRASADO</span>
+                            {% endif %}
+
+                            <!-- 3. Si no hay registros de hoy y TAMPOCO está retrasado -->
+                            {% if not plan.historial_hoy and not plan.esta_retrasado %}
+                                <small class="text-muted">Sin actividad hoy</small>
+                            {% endif %}
                         </td>
 
                         <!-- 👤 PACIENTE -->
